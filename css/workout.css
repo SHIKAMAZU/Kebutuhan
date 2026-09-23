@@ -1,0 +1,101 @@
+/* ============ workout.css — notebook paper + neo-paper cards ============ */
+.content{display:flex;min-height:520px;background:var(--card)}
+.main-area{flex:1;position:relative;overflow:hidden;display:flex;justify-content:center;align-items:flex-start;padding:32px 30px 32px 78px;overflow-y:auto;max-height:640px;border-right:1px solid var(--line-soft);
+  background:
+    linear-gradient(90deg, transparent 56px, rgba(169,50,38,.45) 56px, rgba(169,50,38,.45) 58px, transparent 58px),
+    repeating-linear-gradient(transparent 0 27px, rgba(46,42,36,.14) 27px 28px),
+    var(--card-2);
+}
+.main-area::-webkit-scrollbar{width:8px}
+.main-area::-webkit-scrollbar-track{background:transparent}
+.main-area::-webkit-scrollbar-thumb{background:#A99B7E;border-radius:99px}
+/* lubang binder kiri */
+.main-area::before{content:'';position:absolute;left:0;top:0;bottom:0;width:56px;pointer-events:none;
+  background-image:radial-gradient(circle, var(--bg) 6px, #F5EDD8 6px, #F5EDD8 8px, #8B8171 8.5px, transparent 9px);
+  background-size:32px 130px;background-repeat:repeat-y;background-position:12px 30px}
+.main-inner{text-align:center;z-index:1;width:100%;max-width:540px;animation:mainFadeIn .5s cubic-bezier(.22,1,.36,1) both;padding:6px 0 10px;position:relative}
+@keyframes mainFadeIn{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.main-icon{font-size:52px;display:inline-grid;place-items:center;width:84px;height:84px;margin-bottom:14px;background:#F5EDD8;border:1.5px solid #2E2A24;border-radius:14px;box-shadow:3px 4px 0 #2E2A24}
+/* marker highlight ala gambar */
+.main-title{font-family:var(--disp);font-size:36px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px;color:var(--txt);display:inline-block;padding:0 10px;background:linear-gradient(transparent 52%, #E8C86A 52%, #E8C86A 94%, transparent 94%)}
+.main-desc{color:var(--muted);font-size:13.5px;margin-bottom:20px}
+/* numbering 01 02 otomatis via CSS counter — tanpa ubah JS */
+.workout-list{margin:18px 0 8px;text-align:left;display:flex;flex-direction:column;gap:14px;counter-reset:task}
+.workout-entry{margin:0;position:relative;counter-increment:task}
+.workout-entry::before{content:'0' counter(task);position:absolute;left:30px;top:22px;font-size:13px;font-weight:800;color:var(--lime);letter-spacing:.5px;z-index:3}
+.workout-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px 14px 56px;background:#F5EDD8;border:1.5px solid #2E2A24;border-radius:12px;box-shadow:3px 4px 0 #2E2A24;transition:transform .12s ease,box-shadow .12s ease;position:relative;overflow:hidden}
+.workout-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:7px;background:var(--lime)}
+.workout-entry:nth-child(even) .workout-item::before{background:#4F7358}
+.workout-item:hover{transform:translate(-1px,-1px);box-shadow:4px 5px 0 #2E2A24;border-color:#2E2A24}
+.workout-info{display:flex;align-items:center;gap:12px}
+/* ubah dot jadi kotak checkbox ala gambar */
+.workout-dot{width:18px;height:18px;border-radius:4px;border:1.5px solid #2E2A24;background:transparent;flex-shrink:0}
+.workout-text{font-size:15.5px;color:var(--txt);font-weight:600;letter-spacing:.1px}
+/* Link TikTok disembunyikan — Detail tetap jalan */
+.workout-link-toggle{display:none !important}
+.workout-link-panel{display:none !important}
+/* Detail inline di tiap kartu latihan */
+.detail-card.ex-inline{flex:0 0 auto;padding:8px 13px;font-size:12.5px;box-shadow:2px 3px 0 #2E2A24}
+.detail-card.ex-inline .detail-text{font-size:12.5px}
+.workout-entry .detail-panel.open{margin-top:10px}
+.workout-entry .detail-panel-inner{background:#D8CCAF;border:1px dashed #2E2A24;border-radius:10px;padding:14px}
+.link-row{display:flex;gap:8px;align-items:center}
+.link-row .workout-link-input{flex:1}
+.link-add{padding:9px 12px;border-radius:8px;border:1.5px dashed rgba(169,50,38,.55);background:rgba(169,50,38,.08);color:var(--lime);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer;transition:background .15s,color .15s}
+.link-add:hover{background:var(--lime);color:#F5EDD8;border-style:solid}
+.link-del{width:32px;height:38px;flex-shrink:0;border-radius:8px;border:1.5px solid #2E2A24;background:#F5EDD8;color:var(--lime);font-size:18px;font-weight:800;line-height:1;cursor:pointer}
+.link-del:hover{background:var(--lime);color:#F5EDD8;border-color:var(--lime)}
+.meta-divider{border-top:1px dashed #2E2A24;margin:6px 0 2px}
+.meta-label{display:flex;flex-direction:column;gap:6px;font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--violet-2);text-align:left}
+.workout-meta-input{width:100%;padding:10px 12px;border:1px solid #2E2A24;border-radius:8px;font-size:13px;color:var(--txt);background:#EDE4CF;outline:none;font-family:inherit;text-transform:none;letter-spacing:normal}
+.workout-meta-input:focus{border-color:var(--lime)}
+.workout-meta-input::placeholder{color:var(--muted-2)}
+.link-del-text{padding:9px 12px;border-radius:8px;border:1px solid var(--lime);background:transparent;color:var(--lime);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
+.link-del-text:hover{background:var(--lime);color:#F5EDD8}
+.workout-link-toggle span:last-child{font-size:10px}
+.workout-link-arrow{font-size:11px;transition:transform .25s ease}
+.workout-link-arrow.open{transform:rotate(180deg)}
+.workout-link-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease,margin-top .3s ease;margin-top:0}
+.workout-link-panel.open{grid-template-rows:1fr;margin-top:10px}
+.workout-link-panel-inner{overflow:hidden;display:flex;flex-direction:column;gap:8px;padding:14px;background:#D8CCAF;border:1px dashed #2E2A24;border-radius:10px}
+.workout-link-label{font-size:12px;font-weight:700;color:var(--violet-2);letter-spacing:.8px;text-transform:uppercase}
+.workout-link-input{width:100%;padding:11px 13px;border:1px solid #2E2A24;border-radius:8px;font-size:13px;color:var(--txt);background:#EDE4CF;outline:none;transition:border-color .15s;font-family:inherit}
+.workout-link-input:focus{border-color:var(--lime)}
+.workout-link-input::placeholder{color:var(--muted-2)}
+.rest-box{margin:16px auto 8px;padding:16px 26px;background:#F5EDD8;border:1.5px solid #2E2A24;border-radius:12px;box-shadow:3px 4px 0 #2E2A24;display:inline-flex;align-items:center;gap:12px}
+.rest-box .rest-icon{font-size:30px}
+.rest-box .rest-text{font-size:18px;font-weight:700;color:var(--txt);letter-spacing:.3px;font-family:var(--disp)}
+/* checklist card + washi tape */
+.checklist-wrap{margin-top:22px;text-align:left;background:var(--card-2);border:1.5px solid #2E2A24;border-radius:12px;box-shadow:3px 4px 0 #2E2A24;padding:20px 18px 18px;position:relative}
+.checklist-wrap::before{content:'';position:absolute;top:-13px;left:50%;transform:translateX(-50%) rotate(-2deg);width:120px;height:24px;background:repeating-linear-gradient(45deg,var(--lime) 0 12px,#E8C86A 12px 24px);border:1px solid rgba(46,42,36,.3);opacity:.95}
+.checklist-label-section{font-size:11.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.6px;margin-bottom:14px;text-align:center}
+.checklist-label-section::after{content:'';display:block;width:56px;height:3px;margin:10px auto 0;border-radius:2px;background:var(--lime)}
+.checklist-item{margin-bottom:12px}
+.checklist-item:last-of-type{margin-bottom:4px}
+.checklist-row-pair{display:flex;gap:10px}
+.minggu-card{flex:1.15;display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:#F5EDD8;border:1.5px solid #2E2A24;border-radius:12px;box-shadow:3px 4px 0 #2E2A24;transition:transform .12s ease,box-shadow .12s ease;cursor:pointer;user-select:none;position:relative;overflow:visible}
+.minggu-card:hover{transform:translate(-1px,-1px);box-shadow:4px 5px 0 #2E2A24;border-color:#2E2A24}
+.minggu-card.done{background:#E7E2CE;border-color:#2E2A24}
+/* stamp SELESAI ala gambar — CSS only */
+.minggu-card.done::after{content:'SELESAI';position:absolute;right:54px;top:50%;transform:translateY(-50%) rotate(-8deg);border:2px dashed #4F7358;color:#4F7358;font-size:10px;font-weight:800;letter-spacing:1.5px;padding:3px 8px;border-radius:6px;background:rgba(245,237,216,.7)}
+.minggu-card.done .checklist-text{color:#3A523E;text-decoration:line-through;text-decoration-thickness:1.5px}
+.checklist-text{font-size:14.5px;font-weight:700;color:var(--txt)}
+.checklist-box{width:22px;height:22px;border:1.5px solid #2E2A24;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#EDE4CF;flex-shrink:0;transition:background .15s,border-color .15s}
+.minggu-card:hover .checklist-box{border-color:var(--lime)}
+.checklist-box.checked{background:#2E5FA3;border-color:#2E2A24}
+.checklist-box .checkmark{color:#F5EDD8;font-size:13px;font-weight:900;opacity:0}
+.checklist-box.checked .checkmark{opacity:1}
+.detail-card{flex:.85;display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:#D8CCAF;border:1.5px solid #2E2A24;border-radius:12px;box-shadow:3px 4px 0 #2E2A24;cursor:pointer;user-select:none;transition:transform .12s ease}
+.detail-card:hover{transform:translate(-1px,-1px);border-color:#2E2A24;background:#CFC2A6}
+.detail-text{font-size:13.5px;font-weight:600;color:var(--muted)}
+.detail-arrow{font-size:11px;color:var(--muted-2);display:inline-block;transition:transform .25s ease}
+.detail-arrow.open{transform:rotate(180deg);color:var(--lime)}
+.detail-panel{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease,margin-top .3s ease;margin-top:0}
+.detail-panel.open{grid-template-rows:1fr;margin-top:10px}
+.detail-panel-inner{overflow:hidden;display:flex;flex-direction:column;gap:8px}
+.detail-pill{display:block;max-width:100%;background:#F5EDD8;border:1px solid #2E2A24;color:var(--txt);font-size:13.5px;font-weight:500;padding:11px 18px;border-radius:10px;text-align:center}
+.detail-pill-title{font-weight:700;color:var(--lime)}
+.checklist-progress{margin-top:16px;background:#D8CCAF;border-radius:10px;padding:14px 16px;border:1px dashed #2E2A24}
+.progress-bar-bg{width:100%;height:10px;background:#BFAE8D;border:1px solid #2E2A24;border-radius:6px;overflow:hidden}
+.progress-bar-fill{height:100%;background:var(--lime);border-radius:0;transition:width .5s cubic-bezier(.22,1,.36,1);width:0%}
+.progress-text{text-align:center;margin-top:10px;font-size:12.5px;color:var(--muted);font-weight:600}

@@ -1,0 +1,8 @@
+/* ============ header.css — mid masthead ============ */
+.header{position:relative;padding:36px 38px 28px;background:var(--card-2);overflow:hidden;border-bottom:1px solid var(--line-soft);border-top:4px solid var(--lime)}
+.header-glow{display:none}
+.header::after{display:none}
+.logo-mark{width:34px;height:34px;display:grid;place-items:center;border-radius:8px;background:var(--lime);color:#F5EDD8;font-weight:800;border:1px solid var(--lime-2)}
+.header-text{font-family:var(--disp);font-size:clamp(32px,5vw,46px);font-weight:700;line-height:1.05;letter-spacing:-.5px;position:relative;z-index:1;color:var(--txt);background:none;-webkit-background-clip:border-box;background-clip:border-box;-webkit-text-fill-color:currentColor;animation:headerSlide .6s 1.2s cubic-bezier(.22,1,.36,1) both}
+@keyframes headerSlide{from{transform:translateY(-18px);opacity:0}to{transform:none;opacity:1}}
+.header-sub{margin-top:10px;color:var(--muted);font-size:14.5px;line-height:1.6;max-width:560px;position:relative;z-index:1}

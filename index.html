@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA FIT — Jadwal Workout</title>
+    <meta name="description" content="Jadwal workout mingguan premium — track progress 4 minggu, simpan link referensi TikTok.">
+    <meta name="theme-color" content="#A93226">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/background.css">
+    <link rel="stylesheet" href="css/loader.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/nav.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/workout.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="bg-scene" aria-hidden="true">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="grid-overlay"></div>
+        <div class="noise"></div>
+    </div>
+
+    <div class="loader" id="loader">
+        <div class="loader-card">
+            <div class="loader-ring"><span></span></div>
+            <div class="loader-brand">AURA FIT</div>
+            <p>Menyiapkan program latihanmu…</p>
+            <div class="loader-dots"><i></i><i></i><i></i></div>
+        </div>
+    </div>
+
+    <div class="wrapper" id="wrapper">
+        <div class="top-eyebrow">
+            <span class="live-dot"></span>
+            <span>Program 4 Minggu &bull; Auto-save &bull; Mobile Friendly</span>
+        </div>
+
+        <div class="app-shell">
+            <nav class="app-nav" id="appNav">
+                <div class="appnav-logo">
+                    <span class="logo-mark">◈</span>
+                </div>
+                <div class="appnav-label">Menu</div>
+                <div class="nav-list" id="navList">
+                    <button class="nav-item active" data-page="workout" title="Jadwal Workout">
+                        <span class="nav-ico">🏋️</span>
+                        <span class="nav-txt">Workout</span>
+                    </button>
+                </div>
+                <button class="nav-add" id="navAddBtn" title="Buat halaman baru">
+                    <span class="nav-add-plus">+</span>
+                    <span class="nav-txt">Halaman Baru</span>
+                </button>
+                <div class="appnav-foot">AURA v1.0</div>
+            </nav>
+
+            <div class="container" id="container">
+            <div class="header">
+                <div class="header-glow"></div>
+                <h1 class="header-text" id="pageTitle">Jadwal Workout</h1>
+                <p class="header-sub" id="pageSub">Pilih hari, gas latihan, centang progres mingguanmu. Semua tersimpan otomatis di perangkat ini.</p>
+            </div>
+            <div class="content">
+                <div class="main-area" id="mainArea">
+                    <div class="particles" id="particles"></div>
+                    <div class="main-inner" id="mainInner"></div>
+                </div>
+                <aside class="sidebar" id="sidebar">
+                    <div class="sidebar-title">Pilih Hari</div>
+                    <div class="day" data-day="Senin" data-icon="🏋️">Senin</div>
+                    <div class="day" data-day="Selasa" data-icon="🤸">Selasa</div>
+                    <div class="day" data-day="Rabu" data-icon="💪">Rabu</div>
+                    <div class="day" data-day="Kamis" data-icon="🏋️">Kamis</div>
+                    <div class="day" data-day="Jumat" data-icon="🤸">Jumat</div>
+                    <div class="day" data-day="Sabtu" data-icon="😴">Sabtu</div>
+                    <div class="day" data-day="Minggu" data-icon="💪">Minggu</div>
+                    <div class="sidebar-foot">🔒 Progress tersimpan otomatis
+                        <div class="backup-row">
+                            <button class="backup-btn" id="exportBtn" title="Download backup JSON">⬇ Backup</button>
+                            <button class="backup-btn" id="importBtn" title="Restore dari file JSON">⬆ Restore</button>
+                            <input type="file" id="importFile" accept="application/json,.json" hidden>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+            </div><!-- /container -->
+        </div><!-- /app-shell -->
+
+        <div class="realtime-bar" id="realtimeBar">
+            <div class="rt-left">
+                <span class="rt-icon">📅</span>
+                <span class="rt-date" id="rtDate">Memuat...</span>
+            </div>
+            <div class="rt-divider"></div>
+            <div class="rt-right">
+                <span class="rt-pulse"></span>
+                <span class="rt-icon">🕐</span>
+                <span class="rt-time" id="rtTime">--:--:--</span>
+            </div>
+        </div>
+        <div class="foot-note">Dibuat buat nemenin konsistenmu — satu centang tiap minggu 💪</div>
+    </div>
+
+    <div class="modal-backdrop" id="pageModal">
+        <div class="modal">
+            <div class="modal-title" id="modalTitle">＋ Halaman Baru</div>
+            <p class="modal-sub" id="modalSub">Kasih nama & ikon, langsung jadi menu di sidebar kiri.</p>
+            <label class="modal-label">Nama halaman</label>
+            <input type="text" class="modal-input" id="newPageTitle" placeholder="cth: Nutrisi, Lari, Meal Plan..." maxlength="24">
+            <label class="modal-label">Pilih ikon</label>
+            <div class="icon-pick" id="iconPick">
+                <button class="icon-opt selected" data-icon="🥗">🥗</button>
+                <button class="icon-opt" data-icon="🏃">🏃</button>
+                <button class="icon-opt" data-icon="💧">💧</button>
+                <button class="icon-opt" data-icon="😴">😴</button>
+                <button class="icon-opt" data-icon="🔥">🔥</button>
+                <button class="icon-opt" data-icon="📓">📓</button>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-ghost" id="modalCancel">Batal</button>
+                <button class="btn-primary" id="modalSave">Buat Halaman</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/realtime.js"></script>
+    <script src="js/workout.js"></script>
+    <script src="js/pages.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js').catch(() => {});
+        });
+      }
+    </script>
+</body>
+</html>

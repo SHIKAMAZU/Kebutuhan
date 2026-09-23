@@ -1,0 +1,6 @@
+/* ============ layout.css — mid paper ============ */
+.wrapper{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;max-width:1000px;margin:6px 0;opacity:0;transform:translateY(40px) scale(.97);animation:wrapperAppear .8s 1s cubic-bezier(.22,1,.36,1) forwards}
+@keyframes wrapperAppear{to{opacity:1;transform:none}}
+.top-eyebrow{display:flex;align-items:center;gap:10px;font-size:12px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);background:var(--card);border:1px solid var(--line);padding:9px 18px;border-radius:999px}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--lime);animation:pulse 1.8s infinite}
+.container{width:100%;flex:1;min-width:0;border-radius:var(--radius);overflow:hidden;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}

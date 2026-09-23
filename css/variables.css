@@ -1,0 +1,39 @@
+/* ============ variables.css — warm paper mid-tone ============ */
+:root{
+  --bg:#DCD0B6;
+  --card:#E6DBC2;
+  --card-2:#EDE4CF;
+  --line:#BFAE8D;
+  --line-soft:#C6B998;
+  --txt:#2E2A24;
+  --muted:#6A6255;
+  --muted-2:#8B8171;
+  --lime:#A93226;
+  --lime-2:#7E241A;
+  --violet:#5C4A3A;
+  --violet-2:#6E5C48;
+  --cyan:#6A6255;
+  --green:#4F7358;
+  --amber:#8A6D2B;
+  --radius:10px;
+  --shadow:0 1px 3px rgba(46,42,36,.14);
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --disp:Georgia,'Playfair Display',Georgia,'Times New Roman',serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--txt);
+  min-height:100vh;
+  display:flex;justify-content:center;align-items:flex-start;
+  padding:34px 20px 60px;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--lime);color:#F5EDD8}
+body::-webkit-scrollbar{width:9px}
+body::-webkit-scrollbar-track{background:#CFC2A6}
+body::-webkit-scrollbar-thumb{background:#A99B7E;border-radius:99px}
+body::-webkit-scrollbar-thumb:hover{background:var(--lime)}
