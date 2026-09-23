@@ -64,7 +64,7 @@ function renderDay(dayName) {
             const detailIdEx = `${dayName}-ex-${idx}`;
             const isDetailOpen = AURA.openDetails.has(detailIdEx);
             const savedLinks = getItemLinks(dayName, idx);
-            const meta = getItemMeta(dayName, idx);
+            const metaList = getItemMetaList(dayName, idx);
 
             const inputsHTML = savedLinks.map((link, slotIdx) => `
                 <div class="link-row">
@@ -73,6 +73,38 @@ function renderDay(dayName) {
                         placeholder="Paste link TikTok ${slotIdx + 1}..."
                         value="${escapeHtml(link)}">
                     ${savedLinks.length > 1 ? `<button class="link-del" onclick="event.stopPropagation(); window.removeLink('${dayName}', ${idx}, ${slotIdx})" title="Hapus link">×</button>` : ''}
+                </div>
+            `).join('');
+
+            const metaHTML = metaList.map((m, eIdx) => `
+                <div class="meta-entry">
+                    ${metaList.length > 1 ? `<div class="meta-top"><button class="link-del" onclick="event.stopPropagation(); window.removeMeta('${dayName}', ${idx}, ${eIdx})" title="Hapus info">×</button></div>` : ''}
+                    <div class="meta-head">
+                        <span class="meta-title">Info latihan...</span>
+                        <label class="meta-week">Minggu
+                            <input type="text" class="workout-meta-input meta-week-input"
+                                data-day="${dayName}" data-idx="${idx}" data-entry="${eIdx}" data-field="minggu"
+                                placeholder="1-2" maxlength="7" value="${escapeHtml(m.minggu)}">
+                        </label>
+                    </div>
+                    <label class="meta-label">Beban
+                        <input type="text" class="workout-meta-input"
+                            data-day="${dayName}" data-idx="${idx}" data-entry="${eIdx}" data-field="berat"
+                            placeholder="cth: 5 kg..."
+                            value="${escapeHtml(m.berat)}">
+                    </label>
+                    <label class="meta-label">Istirahat antar set
+                        <input type="text" class="workout-meta-input"
+                            data-day="${dayName}" data-idx="${idx}" data-entry="${eIdx}" data-field="antarSet"
+                            placeholder="cth: 5 menit..."
+                            value="${escapeHtml(m.antarSet)}">
+                    </label>
+                    <label class="meta-label">Istirahat antar repetisi
+                        <input type="text" class="workout-meta-input"
+                            data-day="${dayName}" data-idx="${idx}" data-entry="${eIdx}" data-field="antarRepetisi"
+                            placeholder="cth: 50 detik..."
+                            value="${escapeHtml(m.antarRepetisi)}">
+                    </label>
                 </div>
             `).join('');
 
@@ -94,26 +126,8 @@ function renderDay(dayName) {
                             ${inputsHTML}
                             <button class="link-add" onclick="event.stopPropagation(); window.addLink('${dayName}', ${idx})">+ Tambah Link</button>
                             <div class="meta-divider"></div>
-                            <div class="workout-link-label">Info Latihan...</div>
-                            <label class="meta-label">Beban
-                                <input type="text" class="workout-meta-input"
-                                    data-day="${dayName}" data-idx="${idx}" data-field="berat"
-                                    placeholder="cth: 5 kg..."
-                                    value="${escapeHtml(meta.berat)}">
-                            </label>
-                            <label class="meta-label">Istirahat antar set
-                                <input type="text" class="workout-meta-input"
-                                    data-day="${dayName}" data-idx="${idx}" data-field="antarSet"
-                                    placeholder="cth: 5 menit..."
-                                    value="${escapeHtml(meta.antarSet)}">
-                            </label>
-                            <label class="meta-label">Istirahat antar repetisi
-                                <input type="text" class="workout-meta-input"
-                                    data-day="${dayName}" data-idx="${idx}" data-field="antarRepetisi"
-                                    placeholder="cth: 50 detik..."
-                                    value="${escapeHtml(meta.antarRepetisi)}">
-                            </label>
-                            <button class="link-del-text" onclick="event.stopPropagation(); window.clearMeta('${dayName}', ${idx})">Hapus info ini</button>
+                            ${metaHTML}
+                            <button class="link-add" onclick="event.stopPropagation(); window.addMeta('${dayName}', ${idx})">+ Tambah Info</button>
                         </div>
                     </div>
                 </div>
@@ -199,6 +213,16 @@ window.removeLink = function(dayName, itemIdx, slotIdx) {
 
 window.clearMeta = function(dayName, itemIdx) {
     clearItemMeta(dayName, itemIdx);
+    renderDay(dayName);
+};
+
+window.addMeta = function(dayName, itemIdx) {
+    addItemMetaEntry(dayName, itemIdx);
+    renderDay(dayName);
+};
+
+window.removeMeta = function(dayName, itemIdx, entryIdx) {
+    removeItemMetaEntry(dayName, itemIdx, entryIdx);
     renderDay(dayName);
 };
 

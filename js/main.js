@@ -39,10 +39,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (input.classList.contains('workout-meta-input')) {
             const dayName = input.dataset.day;
             const itemIdx = input.dataset.idx;
+            const entry = input.dataset.entry;
             const field = input.dataset.field;
-            if (dayName !== undefined && itemIdx !== undefined && field) {
-                saveItemMetaField(dayName, itemIdx, field, input.value);
+            if (dayName !== undefined && itemIdx !== undefined && entry !== undefined && field) {
+                saveItemMetaEntryField(dayName, itemIdx, Number(entry), field, input.value);
             }
+        }
+    });
+
+    // Delegasi change: dropdown minggu per info latihan
+    mainInner.addEventListener('change', (e) => {
+        const sel = e.target;
+        if (!sel.classList || !sel.classList.contains('workout-meta-select')) return;
+        const dayName = sel.dataset.day;
+        const itemIdx = sel.dataset.idx;
+        const entry = sel.dataset.entry;
+        if (dayName !== undefined && itemIdx !== undefined && entry !== undefined) {
+            saveItemMetaEntryField(dayName, itemIdx, Number(entry), 'minggu', sel.value);
         }
     });
 

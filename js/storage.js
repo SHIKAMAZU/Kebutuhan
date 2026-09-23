@@ -125,6 +125,69 @@ function clearItemMeta(dayName, itemIdx) {
     localStorage.setItem(AURA.META_KEY, JSON.stringify(all));
 }
 
+// ---------- INFO LATIHAN LIST (bisa nambah banyak, per minggu) ----------
+// Format baru: { "Senin": { "0": [ {minggu:'1', berat:'', antarSet:'', antarRepetisi:''} ] } }
+// Otomatis migrasi dari format lama {berat, antarSet, antarRepetisi}.
+function blankMetaEntry() {
+    return { minggu: '1', berat: '', antarSet: '', antarRepetisi: '' };
+}
+
+function normalizeMetaEntry(e) {
+    const b = blankMetaEntry();
+    if (!e || typeof e !== 'object') return b;
+    let mg = String(e.minggu !== undefined ? e.minggu : '1').trim();
+    // longgar: terima "1", "1-2", "1-3", "2-4", dst (termasuk dash HP).
+    // Jangan pernah buang ketikan user — cuma rapikan.
+    mg = mg.replace(/[–—]/g, '-').replace(/[^0-9,\-\/\s]/g, '').replace(/\s+/g, '').slice(0, 7);
+    if (!/\d/.test(mg)) mg = '1';
+    return {
+        minggu: mg,
+        berat: e.berat || '',
+        antarSet: e.antarSet || '',
+        antarRepetisi: e.antarRepetisi || ''
+    };
+}
+
+function getItemMetaList(dayName, itemIdx) {
+    const all = getAllMeta();
+    const raw = (all[dayName] || {})[itemIdx];
+    if (Array.isArray(raw) && raw.length > 0) return raw.map(normalizeMetaEntry);
+    if (raw && typeof raw === 'object' && (raw.berat || raw.antarSet || raw.antarRepetisi)) {
+        return [normalizeMetaEntry({ minggu: '1', berat: raw.berat, antarSet: raw.antarSet, antarRepetisi: raw.antarRepetisi })];
+    }
+    return [blankMetaEntry()];
+}
+
+function setItemMetaList(dayName, itemIdx, list) {
+    const all = getAllMeta();
+    if (!all[dayName]) all[dayName] = {};
+    all[dayName][itemIdx] = list;
+    localStorage.setItem(AURA.META_KEY, JSON.stringify(all));
+}
+
+function saveItemMetaEntryField(dayName, itemIdx, entryIdx, field, value) {
+    const list = getItemMetaList(dayName, itemIdx);
+    if (!list[entryIdx]) return;
+    list[entryIdx][field] = value;
+    setItemMetaList(dayName, itemIdx, list);
+}
+
+function addItemMetaEntry(dayName, itemIdx) {
+    const list = getItemMetaList(dayName, itemIdx);
+    if (list.length >= 8) return list;
+    list.push(blankMetaEntry());
+    setItemMetaList(dayName, itemIdx, list);
+    return list;
+}
+
+function removeItemMetaEntry(dayName, itemIdx, entryIdx) {
+    const list = getItemMetaList(dayName, itemIdx);
+    list.splice(entryIdx, 1);
+    if (list.length === 0) list.push(blankMetaEntry());
+    setItemMetaList(dayName, itemIdx, list);
+    return list;
+}
+
 // ---------- HALAMAN CUSTOM ----------
 function getPages() {
     try { return JSON.parse(localStorage.getItem(AURA.PAGES_KEY)) || []; }

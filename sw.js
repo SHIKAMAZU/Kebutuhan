@@ -1,5 +1,5 @@
 /* sw.js — offline cache buat PWA AURA FIT */
-const CACHE = 'aura-fit-v1';
+const CACHE = 'aura-fit-v2';
 const ASSETS = [
   './',
   './index.html',
