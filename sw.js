@@ -1,5 +1,5 @@
-/* sw.js — offline cache buat PWA AURA FIT */
-const CACHE = 'aura-fit-v2';
+/* sw.js — network-first: selalu coba versi terbaru, cache cuma cadangan offline */
+const CACHE = 'aura-fit-v3';
 const ASSETS = [
   './',
   './index.html',
@@ -36,16 +36,14 @@ self.addEventListener('activate', (e) => {
 
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return;
+  // network-first: ambil yang terbaru dari server, jatuh ke cache kalau offline
   e.respondWith(
-    caches.match(e.request, { ignoreSearch: true }).then((hit) => {
-      const net = fetch(e.request).then((res) => {
-        if (res && res.status === 200 && new URL(e.request.url).origin === location.origin) {
-          const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(e.request, copy));
-        }
-        return res;
-      }).catch(() => hit);
-      return hit || net;
-    })
+    fetch(e.request).then((res) => {
+      if (res && res.status === 200 && new URL(e.request.url).origin === location.origin) {
+        const copy = res.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, copy));
+      }
+      return res;
+    }).catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
 });
