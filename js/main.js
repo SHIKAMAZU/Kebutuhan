@@ -27,8 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Taruh di mainInner sekali aja, jadi gak hilang walau di-render ulang.
     mainInner.addEventListener('input', (e) => {
         const input = e.target;
+        if (input.classList.contains('cat-link-input')) {
+            const dayName = input.dataset.day;
+            const catIdx = input.dataset.cat;
+            const slotIdx = input.dataset.slot;
+            if (dayName !== undefined && catIdx !== undefined) {
+                if (slotIdx !== undefined) saveCategoryLinkSlot(dayName, Number(catIdx), Number(slotIdx), input.value);
+                else saveCategoryLink(dayName, Number(catIdx), input.value);
+            }
+            return;
+        }
         if (input.classList.contains('workout-link-input')) {
             const dayName = input.dataset.day;
+            // format baru: data-cat + data-ex
+            if (dayName !== undefined && input.dataset.cat !== undefined && input.dataset.ex !== undefined && input.dataset.slot !== undefined) {
+                saveExerciseLink(dayName, Number(input.dataset.cat), Number(input.dataset.ex), Number(input.dataset.slot), input.value);
+                return;
+            }
+            // format lama: data-idx
             const itemIdx = input.dataset.idx;
             const slotIdx = input.dataset.slot;
             if (dayName !== undefined && itemIdx !== undefined && slotIdx !== undefined) {
@@ -38,9 +54,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (input.classList.contains('workout-meta-input')) {
             const dayName = input.dataset.day;
+            const field = input.dataset.field;
+            // format baru
+            if (dayName !== undefined && input.dataset.cat !== undefined && input.dataset.ex !== undefined && input.dataset.entry !== undefined && field) {
+                saveExerciseMetaEntryField(dayName, Number(input.dataset.cat), Number(input.dataset.ex), Number(input.dataset.entry), field, input.value);
+                return;
+            }
+            // format lama
             const itemIdx = input.dataset.idx;
             const entry = input.dataset.entry;
-            const field = input.dataset.field;
             if (dayName !== undefined && itemIdx !== undefined && entry !== undefined && field) {
                 saveItemMetaEntryField(dayName, itemIdx, Number(entry), field, input.value);
             }
@@ -52,6 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const sel = e.target;
         if (!sel.classList || !sel.classList.contains('workout-meta-select')) return;
         const dayName = sel.dataset.day;
+        if (dayName !== undefined && sel.dataset.cat !== undefined && sel.dataset.ex !== undefined && sel.dataset.entry !== undefined) {
+            saveExerciseMetaEntryField(dayName, Number(sel.dataset.cat), Number(sel.dataset.ex), Number(sel.dataset.entry), 'minggu', sel.value);
+            return;
+        }
         const itemIdx = sel.dataset.idx;
         const entry = sel.dataset.entry;
         if (dayName !== undefined && itemIdx !== undefined && entry !== undefined) {

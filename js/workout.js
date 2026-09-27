@@ -48,11 +48,12 @@ function renderChecklistHTML(dayName) {
 function renderDay(dayName) {
     const mainInner = AURA.els.mainInner;
     const data = AURA.workoutData[dayName];
+    if (!AURA.openCats) AURA.openCats = new Set();
     let workoutHTML = '';
 
-    if (data.items === null) {
+    if (!data || data.items === null) {
         workoutHTML = `
-            <span class="main-icon">${data.icon}</span>
+            <span class="main-icon">${data ? data.icon : '😴'}</span>
             <div class="main-title">${dayName}</div>
             <div class="rest-box">
                 <span class="rest-icon">🛌</span>
@@ -60,74 +61,102 @@ function renderDay(dayName) {
             </div>
         `;
     } else {
-        const list = data.items.map((item, idx) => {
-            const detailIdEx = `${dayName}-ex-${idx}`;
-            const isDetailOpen = AURA.openDetails.has(detailIdEx);
-            const savedLinks = getItemLinks(dayName, idx);
-            const metaList = getItemMetaList(dayName, idx);
+        const cats = getWorkoutCategories(dayName);
 
-            const inputsHTML = savedLinks.map((link, slotIdx) => `
+        const list = cats.map((cat, catIdx) => {
+            const catId = `${dayName}-cat-${catIdx}`;
+            const isCatOpen = AURA.openCats.has(catId);
+            const catLinks = getCategoryLinks(dayName, catIdx);
+            const catLinksHTML = catLinks.map((cl, slotIdx) => `
                 <div class="link-row">
-                    <input type="text" class="workout-link-input"
-                        data-day="${dayName}" data-idx="${idx}" data-slot="${slotIdx}"
-                        placeholder="Paste link TikTok ${slotIdx + 1}..."
-                        value="${escapeHtml(link)}">
-                    ${savedLinks.length > 1 ? `<button class="link-del" onclick="event.stopPropagation(); window.removeLink('${dayName}', ${idx}, ${slotIdx})" title="Hapus link">×</button>` : ''}
+                    <input type="text" class="cat-link-input"
+                        data-day="${dayName}" data-cat="${catIdx}" data-slot="${slotIdx}"
+                        placeholder="Paste link TikTok ${slotIdx + 1} ${escapeHtml(cat.name)}..."
+                        value="${escapeHtml(cl)}">
+                    ${catLinks.length > 1 ? `<button class="link-del" onclick="event.stopPropagation(); window.removeCatLink('${dayName}', ${catIdx}, ${slotIdx})" title="Hapus link">×</button>` : ''}
                 </div>
             `).join('');
 
-            const metaHTML = metaList.map((m, eIdx) => `
-                <div class="meta-entry">
-                    ${metaList.length > 1 ? `<div class="meta-top"><button class="link-del" onclick="event.stopPropagation(); window.removeMeta('${dayName}', ${idx}, ${eIdx})" title="Hapus info">×</button></div>` : ''}
-                    <div class="meta-head">
-                        <span class="meta-title">Info latihan...</span>
-                        <label class="meta-week">Minggu
-                            <input type="text" class="workout-meta-input meta-week-input"
-                                data-day="${dayName}" data-idx="${idx}" data-entry="${eIdx}" data-field="minggu"
-                                placeholder="1-2" maxlength="7" value="${escapeHtml(m.minggu)}">
+            const subList = (cat.exercises || []).map((exName, exIdx) => {
+                const detailIdEx = `${dayName}-cat${catIdx}-ex${exIdx}`;
+                const isDetailOpen = AURA.openDetails.has(detailIdEx);
+                const metaList = getExerciseMetaList(dayName, catIdx, exIdx);
+
+                const metaHTML = metaList.map((m, eIdx) => `
+                    <div class="meta-entry">
+                        ${metaList.length > 1 ? `<div class="meta-top"><button class="link-del" onclick="event.stopPropagation(); window.removeExMeta('${dayName}', ${catIdx}, ${exIdx}, ${eIdx})" title="Hapus info">×</button></div>` : ''}
+                        <div class="meta-head">
+                            <span class="meta-title">Info latihan...</span>
+                            <label class="meta-week">Minggu
+                                <input type="text" class="workout-meta-input meta-week-input"
+                                    data-day="${dayName}" data-cat="${catIdx}" data-ex="${exIdx}" data-entry="${eIdx}" data-field="minggu"
+                                    placeholder="1-2" maxlength="7" value="${escapeHtml(m.minggu)}">
+                            </label>
+                        </div>
+                        <label class="meta-label">Beban
+                            <input type="text" class="workout-meta-input"
+                                data-day="${dayName}" data-cat="${catIdx}" data-ex="${exIdx}" data-entry="${eIdx}" data-field="berat"
+                                placeholder="cth: 5 kg..."
+                                value="${escapeHtml(m.berat)}">
+                        </label>
+                        <label class="meta-label">Istirahat antar set
+                            <input type="text" class="workout-meta-input"
+                                data-day="${dayName}" data-cat="${catIdx}" data-ex="${exIdx}" data-entry="${eIdx}" data-field="antarSet"
+                                placeholder="cth: 5 menit..."
+                                value="${escapeHtml(m.antarSet)}">
+                        </label>
+                        <label class="meta-label">Istirahat antar repetisi
+                            <input type="text" class="workout-meta-input"
+                                data-day="${dayName}" data-cat="${catIdx}" data-ex="${exIdx}" data-entry="${eIdx}" data-field="antarRepetisi"
+                                placeholder="cth: 50 detik..."
+                                value="${escapeHtml(m.antarRepetisi)}">
                         </label>
                     </div>
-                    <label class="meta-label">Beban
-                        <input type="text" class="workout-meta-input"
-                            data-day="${dayName}" data-idx="${idx}" data-entry="${eIdx}" data-field="berat"
-                            placeholder="cth: 5 kg..."
-                            value="${escapeHtml(m.berat)}">
-                    </label>
-                    <label class="meta-label">Istirahat antar set
-                        <input type="text" class="workout-meta-input"
-                            data-day="${dayName}" data-idx="${idx}" data-entry="${eIdx}" data-field="antarSet"
-                            placeholder="cth: 5 menit..."
-                            value="${escapeHtml(m.antarSet)}">
-                    </label>
-                    <label class="meta-label">Istirahat antar repetisi
-                        <input type="text" class="workout-meta-input"
-                            data-day="${dayName}" data-idx="${idx}" data-entry="${eIdx}" data-field="antarRepetisi"
-                            placeholder="cth: 50 detik..."
-                            value="${escapeHtml(m.antarRepetisi)}">
-                    </label>
-                </div>
-            `).join('');
+                `).join('');
 
-            return `
-                <div class="workout-entry">
-                    <div class="workout-item">
-                        <div class="workout-info">
-                            <div class="workout-dot"></div>
-                            <div class="workout-text">${item}</div>
+                return `
+                    <div class="sub-entry">
+                        <div class="sub-item">
+                            <div class="sub-info">
+                                <span class="sub-num">${exIdx + 1}</span>
+                                <span class="sub-text">${escapeHtml(exName)}</span>
+                            </div>
+                            <div class="detail-card ex-inline sub-detail-btn" onclick="event.stopPropagation(); window.toggleDetail('${detailIdEx}')">
+                                <span class="detail-text">Detail</span>
+                                <span class="detail-arrow ${isDetailOpen ? 'open' : ''}" id="detail-arrow-${detailIdEx}">▼</span>
+                            </div>
                         </div>
-                        <div class="detail-card ex-inline" onclick="event.stopPropagation(); window.toggleDetail('${detailIdEx}')">
-                            <span class="detail-text">Detail</span>
-                            <span class="detail-arrow ${isDetailOpen ? 'open' : ''}" id="detail-arrow-${detailIdEx}">▼</span>
+                        <div class="detail-panel sub-panel ${isDetailOpen ? 'open' : ''}" id="detail-panel-${detailIdEx}">
+                            <div class="detail-panel-inner">
+                                ${metaHTML}
+                                <button class="link-add" onclick="event.stopPropagation(); window.addExMeta('${dayName}', ${catIdx}, ${exIdx})">+ Tambah Info</button>
+                            </div>
                         </div>
                     </div>
-                    <div class="detail-panel ${isDetailOpen ? 'open' : ''}" id="detail-panel-${detailIdEx}">
-                        <div class="detail-panel-inner">
-                            <div class="workout-link-label">Link TikTok...</div>
-                            ${inputsHTML}
-                            <button class="link-add" onclick="event.stopPropagation(); window.addLink('${dayName}', ${idx})">+ Tambah Link</button>
-                            <div class="meta-divider"></div>
-                            ${metaHTML}
-                            <button class="link-add" onclick="event.stopPropagation(); window.addMeta('${dayName}', ${idx})">+ Tambah Info</button>
+                `;
+            }).join('');
+
+            return `
+                <div class="workout-entry cat-entry">
+                    <div class="workout-item cat-head" onclick="window.toggleCat('${catId}')">
+                        <div class="workout-info">
+                            <div class="workout-dot"></div>
+                            <div class="workout-text">${escapeHtml(cat.name)}</div>
+                            <span class="cat-badge">${(cat.exercises || []).length} gerakan</span>
+                        </div>
+                        <div class="detail-card ex-inline cat-toggle">
+                            <span class="detail-text">${isCatOpen ? 'Tutup' : 'Buka'}</span>
+                            <span class="detail-arrow ${isCatOpen ? 'open' : ''}" id="cat-arrow-${catId}">▼</span>
+                        </div>
+                    </div>
+                    <div class="cat-panel ${isCatOpen ? 'open' : ''}" id="cat-panel-${catId}">
+                        <div class="sub-list">
+                            <div class="cat-link-box">
+                                <div class="workout-link-label">📎 Link TikTok — ${escapeHtml(cat.name)}</div>
+                                ${catLinksHTML}
+                                <button class="link-add" onclick="event.stopPropagation(); window.addCatLink('${dayName}', ${catIdx})">+ Tambah Link</button>
+                            </div>
+                            ${subList}
                         </div>
                     </div>
                 </div>
@@ -157,6 +186,59 @@ function updateChecklistOnly(dayName) {
         checklistWrap.outerHTML = renderChecklistHTML(dayName);
     }
 }
+
+window.toggleCat = function(catId) {
+    if (!AURA.openCats) AURA.openCats = new Set();
+    const panel = document.getElementById(`cat-panel-${catId}`);
+    const arrow = document.getElementById(`cat-arrow-${catId}`);
+    if (!panel) return;
+    const willOpen = !panel.classList.contains('open');
+    if (willOpen) {
+        AURA.openCats.add(catId);
+        panel.classList.add('open');
+        if (arrow) arrow.classList.add('open');
+        const head = panel.previousElementSibling;
+        const label = head ? head.querySelector('.cat-toggle .detail-text') : null;
+        if (label) label.textContent = 'Tutup';
+    } else {
+        AURA.openCats.delete(catId);
+        panel.classList.remove('open');
+        if (arrow) arrow.classList.remove('open');
+        const head = panel.previousElementSibling;
+        const label = head ? head.querySelector('.cat-toggle .detail-text') : null;
+        if (label) label.textContent = 'Buka';
+    }
+};
+
+window.addCatLink = function(dayName, catIdx) {
+    addCategoryLink(dayName, catIdx);
+    renderDay(dayName);
+};
+
+window.removeCatLink = function(dayName, catIdx, slotIdx) {
+    removeCategoryLink(dayName, catIdx, slotIdx);
+    renderDay(dayName);
+};
+
+window.addExLink = function(dayName, catIdx, exIdx) {
+    addExerciseLink(dayName, catIdx, exIdx);
+    renderDay(dayName);
+};
+
+window.removeExLink = function(dayName, catIdx, exIdx, slotIdx) {
+    removeExerciseLink(dayName, catIdx, exIdx, slotIdx);
+    renderDay(dayName);
+};
+
+window.addExMeta = function(dayName, catIdx, exIdx) {
+    addExerciseMetaEntry(dayName, catIdx, exIdx);
+    renderDay(dayName);
+};
+
+window.removeExMeta = function(dayName, catIdx, exIdx, entryIdx) {
+    removeExerciseMetaEntry(dayName, catIdx, exIdx, entryIdx);
+    renderDay(dayName);
+};
 
 window.toggleDetail = function(detailId) {
     const panel = document.getElementById(`detail-panel-${detailId}`);
