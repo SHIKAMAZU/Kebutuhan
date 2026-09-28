@@ -1,5 +1,5 @@
 /* sw.js — network-first: selalu coba versi terbaru, cache cuma cadangan offline */
-const CACHE = 'aura-fit-v3';
+const CACHE = 'aura-fit-v4';
 const ASSETS = [
   './',
   './index.html',
