@@ -265,7 +265,9 @@ function getItemMeta(dayName, itemIdx) {
     return {
         berat: (m && m.berat) || '',
         antarSet: (m && m.antarSet) || '',
-        antarRepetisi: (m && m.antarRepetisi) || ''
+        antarRepetisi: (m && m.antarRepetisi) || '',
+        repetisi: (m && m.repetisi) || '',
+        jumlahSet: (m && (m.jumlahSet || m.set)) || ''
     };
 }
 
@@ -287,7 +289,7 @@ function clearItemMeta(dayName, itemIdx) {
 // Format baru: { "Senin": { "0": [ {minggu:'1', berat:'', antarSet:'', antarRepetisi:''} ] } }
 // Otomatis migrasi dari format lama {berat, antarSet, antarRepetisi}.
 function blankMetaEntry() {
-    return { minggu: '1', berat: '', antarSet: '', antarRepetisi: '' };
+    return { minggu: '1', berat: '', antarSet: '', antarRepetisi: '', repetisi: '', jumlahSet: '' };
 }
 
 function normalizeMetaEntry(e) {
@@ -302,7 +304,9 @@ function normalizeMetaEntry(e) {
         minggu: mg,
         berat: e.berat || '',
         antarSet: e.antarSet || '',
-        antarRepetisi: e.antarRepetisi || ''
+        antarRepetisi: e.antarRepetisi || '',
+        repetisi: e.repetisi || '',
+        jumlahSet: e.jumlahSet || e.set || ''
     };
 }
 
@@ -310,8 +314,8 @@ function getItemMetaList(dayName, itemIdx) {
     const all = getAllMeta();
     const raw = (all[dayName] || {})[itemIdx];
     if (Array.isArray(raw) && raw.length > 0) return raw.map(normalizeMetaEntry);
-    if (raw && typeof raw === 'object' && (raw.berat || raw.antarSet || raw.antarRepetisi)) {
-        return [normalizeMetaEntry({ minggu: '1', berat: raw.berat, antarSet: raw.antarSet, antarRepetisi: raw.antarRepetisi })];
+    if (raw && typeof raw === 'object' && (raw.berat || raw.antarSet || raw.antarRepetisi || raw.repetisi || raw.jumlahSet || raw.set)) {
+        return [normalizeMetaEntry({ minggu: '1', berat: raw.berat, antarSet: raw.antarSet, antarRepetisi: raw.antarRepetisi, repetisi: raw.repetisi, jumlahSet: raw.jumlahSet || raw.set })];
     }
     return [blankMetaEntry()];
 }
@@ -361,9 +365,9 @@ function getExerciseMetaList(dayName, catIdx, exIdx) {
     }
     if (raw && typeof raw === 'object') {
         // migrasi objek lama {berat,...} -> gerakan ke-1
-        if (Number(exIdx) === 0 && (raw.berat || raw.antarSet || raw.antarRepetisi) && !Array.isArray(raw[0]) && !Array.isArray(raw['0'])) {
+        if (Number(exIdx) === 0 && (raw.berat || raw.antarSet || raw.antarRepetisi || raw.repetisi || raw.jumlahSet || raw.set) && !Array.isArray(raw[0]) && !Array.isArray(raw['0'])) {
             const hasExKeys = Object.keys(raw).some(k => /^\d+$/.test(k));
-            if (!hasExKeys) return [normalizeMetaEntry({ minggu: '1', berat: raw.berat, antarSet: raw.antarSet, antarRepetisi: raw.antarRepetisi })];
+            if (!hasExKeys) return [normalizeMetaEntry({ minggu: '1', berat: raw.berat, antarSet: raw.antarSet, antarRepetisi: raw.antarRepetisi, repetisi: raw.repetisi, jumlahSet: raw.jumlahSet || raw.set })];
         }
         const exRaw = raw[exIdx];
         if (Array.isArray(exRaw) && exRaw.length > 0) return exRaw.map(normalizeMetaEntry);
@@ -372,7 +376,7 @@ function getExerciseMetaList(dayName, catIdx, exIdx) {
     if (Number(exIdx) === 0) {
         // fallback terakhir: coba baca format lama
         const legacy = getItemMetaList(dayName, catIdx);
-        const isBlank = legacy.length === 1 && !legacy[0].berat && !legacy[0].antarSet && !legacy[0].antarRepetisi;
+        const isBlank = legacy.length === 1 && !legacy[0].berat && !legacy[0].antarSet && !legacy[0].antarRepetisi && !legacy[0].repetisi && !legacy[0].jumlahSet;
         if (!isBlank) return legacy;
     }
     return [blankMetaEntry()];
@@ -384,9 +388,9 @@ function setExerciseMetaList(dayName, catIdx, exIdx, list) {
     let cat = all[dayName][catIdx];
     if (Array.isArray(cat)) { cat = { 0: cat }; }
     else if (!cat || typeof cat !== 'object') { cat = {}; }
-    else if (cat.berat || cat.antarSet || cat.antarRepetisi) {
+    else if (cat.berat || cat.antarSet || cat.antarRepetisi || cat.repetisi || cat.jumlahSet || cat.set) {
         const hasExKeys = Object.keys(cat).some(k => /^\d+$/.test(k));
-        if (!hasExKeys) cat = { 0: [{ minggu: '1', berat: cat.berat, antarSet: cat.antarSet, antarRepetisi: cat.antarRepetisi }] };
+        if (!hasExKeys) cat = { 0: [{ minggu: '1', berat: cat.berat, antarSet: cat.antarSet, antarRepetisi: cat.antarRepetisi, repetisi: cat.repetisi, jumlahSet: cat.jumlahSet || cat.set }] };
     }
     cat[exIdx] = list;
     all[dayName][catIdx] = cat;

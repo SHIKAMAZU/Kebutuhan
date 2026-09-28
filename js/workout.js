@@ -111,6 +111,20 @@ function renderDay(dayName) {
                                 placeholder="cth: 50 detik..."
                                 value="${escapeHtml(m.antarRepetisi)}">
                         </label>
+                        <div class="meta-row-2">
+                            <label class="meta-label">Repetisi
+                                <input type="text" class="workout-meta-input"
+                                    data-day="${dayName}" data-cat="${catIdx}" data-ex="${exIdx}" data-entry="${eIdx}" data-field="repetisi"
+                                    placeholder="cth: 12x..."
+                                    value="${escapeHtml(m.repetisi || '')}">
+                            </label>
+                            <label class="meta-label">Set
+                                <input type="text" class="workout-meta-input"
+                                    data-day="${dayName}" data-cat="${catIdx}" data-ex="${exIdx}" data-entry="${eIdx}" data-field="jumlahSet"
+                                    placeholder="cth: 3 set..."
+                                    value="${escapeHtml(m.jumlahSet || m.set || '')}">
+                            </label>
+                        </div>
                     </div>
                 `).join('');
 
